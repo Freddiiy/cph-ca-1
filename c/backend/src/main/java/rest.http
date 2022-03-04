@@ -1,0 +1,26 @@
+## GET
+GET http://localhost:8080/api/person/test
+Accept: application/json
+###
+
+GET http://localhost:8080/api/person/1
+Accept: application/json
+
+###
+
+GET http://localhost:8080/api/person
+Accept: application/json
+
+###
+DELETE http://localhost:8080/api/person/1
+Accept: application/json
+
+###
+PUT http://localhost:8080/api/person/2
+Content-Type: application/json
+
+{
+  "firstname": "Lone",
+  "lastname": "Olsen",
+  "phone": "87654321"
+}
