@@ -3,6 +3,10 @@ on:
   push:
     branches: 
     - master
+
+defaults:
+  run:
+    working-directory: backend
 jobs:
   Do-the-travis-thing:
     runs-on: ubuntu-20.04 #or ubuntu-latest
@@ -20,7 +24,9 @@ jobs:
         uses: actions/setup-java@v2
         with: 
           java-version: '11'
-          distribution: 'adopt' # openjdk see the setup java action: https://github.com/actions/setup-java
+          distribution: 'adopt' 
+      
+      # openjdk see the setup java action: https://github.com/actions/setup-java
       # - name: Set up MySQL
       #   run: |
       #     sudo /etc/init.d/mysql start
