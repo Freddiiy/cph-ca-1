@@ -2,7 +2,7 @@ name: Github actions with maven build and deploy
 on: 
   push:
     branches: 
-    - master
+    - main
 
 defaults:
   run:
