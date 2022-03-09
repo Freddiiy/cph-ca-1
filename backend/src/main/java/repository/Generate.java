@@ -1,21 +1,42 @@
 package repository;
 
 import entities.Person;
+import entities.Phone;
 import utils.EMF_Creator;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-
+import java.beans.Beans;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 public class Generate {
     private static final EntityManagerFactory emf = EMF_Creator.createEntityManagerFactoryForTest();
 
     public static void main(String[] args) {
-        Person p1 = new Person("Frederik", "Galler", "40404040");
-        Person p2 = new Person("Lasr", "Henriksen", "67676767");
-        Person p3 = new Person("Janne", "Tuborg", "12981298");
-        Person p4 = new Person("Ulrik", "Olsen", "12345678");
+
+        List<Phone> GallersTelefoner = new ArrayList<>();
+        GallersTelefoner.add(new Phone("44442222", "MamaMichelle's Hotline"));
+        GallersTelefoner.add(new Phone("12341234", "Galler's Arbejdstelefon"));
+
+        List<Phone> BeansTelefoner = new ArrayList<>();
+        BeansTelefoner.add(new Phone("22223333", "Bean's Daus Smugler"));
+        BeansTelefoner.add(new Phone("22223334", "Bean's smadret Iphone"));
+
+        List<Phone> ClevesTelefoner = new ArrayList<>();
+        ClevesTelefoner.add(new Phone("66667777", "Cleve's gamle HTC"));
+        ClevesTelefoner.add(new Phone("66668777", "Cleve's samling af dårlige jokes"));
+
+        List<Phone> OliversTelefoner = new ArrayList<>();
+        OliversTelefoner.add(new Phone("98989898", "Oli's Dåse med Snor"));
+
+
+        Person p1 = new Person("Frederik", "Galler", GallersTelefoner);
+        Person p2 = new Person("Bean", "Beanson", BeansTelefoner);
+        Person p3 = new Person("Cleve", "Cleveson", ClevesTelefoner);
+        Person p4 = new Person("Oli", "Olison", OliversTelefoner);
 
         EntityManager em = emf.createEntityManager();
 
