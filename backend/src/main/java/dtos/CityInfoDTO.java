@@ -1,11 +1,21 @@
 package dtos;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import entities.CityInfo;
+import utils.CityInfoApi;
+import utils.EMF_Creator;
 
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 public class CityInfoDTO {
@@ -40,26 +50,11 @@ public class CityInfoDTO {
         this.city = city;
     }
 
-    public CityInfoDTO getCityInfo () {
-        try {
-            URL url = new URL("https://api.dataforsyningen.dk/postnumre");
-            HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
-            urlConnection.setRequestMethod("GET");
-            urlConnection.setRequestProperty("ACCEPT", MediaType.APPLICATION_JSON);
-            Scanner scanner = new Scanner(urlConnection.getInputStream());
-            String jsonString = null;
-
-
-
-            if (scanner.hasNext()) {
-                jsonString = scanner.nextLine();
-            }
-            scanner.close();
-
-
-        } catch (IOException | IOException e) {
-            e.printStackTrace();
-        }
-
+    @Override
+    public String toString() {
+        return "CityInfoDTO{" +
+                "zipCode=" + zipCode +
+                ", city='" + city + '\'' +
+                '}';
     }
 }
