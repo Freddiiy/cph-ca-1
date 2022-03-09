@@ -1,14 +1,19 @@
 package entities;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 public class CityInfo {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    private Long id;
+
     @OneToMany(mappedBy = "cityInfo")
-    private List<Address> address;
+    private List<Address> address = new ArrayList<>();
 
     private int zipCode;
     private String city;
@@ -16,6 +21,10 @@ public class CityInfo {
     public CityInfo(int zipCode, String city) {
         this.zipCode = zipCode;
         this.city = city;
+    }
+
+    public CityInfo()
+    {
     }
 
     public int getZipCode() {

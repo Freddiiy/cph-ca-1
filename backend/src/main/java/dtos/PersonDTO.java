@@ -23,7 +23,7 @@ public class PersonDTO {
             this.id = person.getId();
             this.firstname = person.getFirstname();
             this.lastname = person.getLastname();
-            this.phone = person.getPhone();
+            this.phone = person.getPhone().toString();
         }
     }
 
