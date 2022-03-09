@@ -11,6 +11,13 @@ public class PersonDTO {
     private String lastname;
     private String phone;
 
+
+    public PersonDTO(String firstname, String lastname, String phone) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.phone = phone;
+    }
+
     public PersonDTO(Person person) {
         if (person.getId() != null) {
             this.id = person.getId();
@@ -18,12 +25,6 @@ public class PersonDTO {
             this.lastname = person.getLastname();
             this.phone = person.getPhone();
         }
-    }
-
-    public PersonDTO(String firstname, String lastname, String phone) {
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.phone = phone;
     }
 
     public Long getId() {
