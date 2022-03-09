@@ -5,6 +5,7 @@
  */
 package repository;
 
+import com.mysql.cj.x.protobuf.MysqlxDatatypes;
 import dtos.RenameMeDTO;
 import entities.RenameMe;
 import javax.persistence.EntityManagerFactory;
@@ -21,9 +22,10 @@ public class Populator {
         fe.create(new RenameMeDTO(new RenameMe("First 1", "Last 1")));
         fe.create(new RenameMeDTO(new RenameMe("First 2", "Last 2")));
         fe.create(new RenameMeDTO(new RenameMe("First 3", "Last 3")));
+        fe.create(new RenameMeDTO(new RenameMe("First 4", "Last 4")));
     }
     
-    public static void main(String[] args) {
+    public static void main(MysqlxDatatypes.Scalar.String[] args) {
         populate();
     }
 }
