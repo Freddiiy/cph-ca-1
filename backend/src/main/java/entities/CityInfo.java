@@ -1,6 +1,15 @@
 package entities;
 
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import java.util.List;
+
+@Entity
 public class CityInfo {
+
+    @OneToMany(mappedBy = "cityInfo")
+    private List<Address> address;
+
     private int zipCode;
     private String city;
 

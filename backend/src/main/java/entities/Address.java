@@ -1,6 +1,18 @@
 package entities;
 
+import javax.persistence.*;
+import java.util.List;
+
+@Entity
 public class Address {
+
+    @OneToMany(mappedBy = "address") //Vi får sikkert en fejl her. Mvh Oli
+    private List<Person> residents;
+
+    @ManyToOne(fetch= FetchType.LAZY)
+    @JoinColumn(name="address")
+    private CityInfo cityInfo;
+
     public String street;
     public String description;
 

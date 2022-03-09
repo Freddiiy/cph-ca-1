@@ -2,26 +2,42 @@ package entities;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
-@Table(name = "person")
 public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
+
     private String firstname;
     private String lastname;
-    private String phone;
+
+    @OneToMany(mappedBy = "owner")
+    private List<Phone> phones;
+
+    @ManyToMany
+    @JoinTable(
+            name ="person_hobby",
+            joinColumns = @JoinColumn(name="person_id" , referencedColumnName = "name"),
+            inverseJoinColumns = @JoinColumn(name="name", referencedColumnName = "person_id")
+    )
+    private List<Hobby> hobbies;
+
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "residents")
+    private Address address;
+
     private Date createdAt;
     private Date lastEdited;
 
     public Person() {}
 
-    public Person(String firstname, String lastname, String phone) {
+    public Person(String firstname, String lastname, List<Phone> phones) {
         this.firstname = firstname;
         this.lastname = lastname;
-        this.phone = phone;
+        this.phones = phones;
     }
 
     public Long getId() {
@@ -48,12 +64,12 @@ public class Person {
         this.lastname = lastname;
     }
 
-    public String getPhone() {
-        return phone;
+    public List<Phone> getPhone() {
+        return phones;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setPhone(List<Phone> phones) {
+        this.phones = phones;
     }
 
     public Date getCreatedAt() {
