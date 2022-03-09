@@ -3,7 +3,9 @@ package repository;
 import dtos.PersonDTO;
 import entities.Person;
 
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.TypedQuery;
 import java.util.List;
 
 public class PersonRepository implements IPersonRepository {

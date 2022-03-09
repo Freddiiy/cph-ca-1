@@ -1,13 +1,15 @@
 package repository;
 
 import entities.Person;
+import utils.EMF_Creator;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+
+
 
 public class Generate {
-    private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("pu");
+    private static final EntityManagerFactory emf = EMF_Creator.createEntityManagerFactoryForTest();
 
     public static void main(String[] args) {
         Person p1 = new Person("Frederik", "Galler", "40404040");

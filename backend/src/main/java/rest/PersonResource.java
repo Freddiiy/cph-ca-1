@@ -15,7 +15,7 @@ import java.util.List;
 @Path("/person")
 public class PersonResource {
     private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory();
-    private static final PersonRepository FACADE = PersonRepository.getFacade(EMF);
+    private static final PersonRepository REPO = PersonRepository.getFacade(EMF);
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     @GET
@@ -29,7 +29,7 @@ public class PersonResource {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPerson(@PathParam("id") long id) {
-        PersonDTO personDTO = FACADE.get(id);
+        PersonDTO personDTO = REPO.get(id);
         if (personDTO == null) return Response.status(404).build();
 
         return Response
@@ -41,7 +41,7 @@ public class PersonResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll() {
-        List<PersonDTO> personDTOList = FACADE.getAll();
+        List<PersonDTO> personDTOList = REPO.getAll();
         if (personDTOList == null) return Response.status(404).build();
 
         return Response
@@ -56,7 +56,7 @@ public class PersonResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createPerson(String jsonObject) {
         PersonDTO personDTO = GSON.fromJson(jsonObject, PersonDTO.class);
-        PersonDTO returnedPersonDTO = FACADE.add(personDTO);
+        PersonDTO returnedPersonDTO = REPO.add(personDTO);
         if (returnedPersonDTO == null) return Response.status(404).build();
 
         return Response
@@ -68,7 +68,7 @@ public class PersonResource {
     @DELETE
     @Path("/{id}")
     public Response deletePerson(@PathParam("id") Long id) {
-        PersonDTO personDTO = FACADE.delete(id);
+        PersonDTO personDTO = REPO.delete(id);
         if (personDTO == null) return Response.status(404).build();
 
         return Response
@@ -82,7 +82,7 @@ public class PersonResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updatePerson(@PathParam("id") Long id, String jsonObject) {
-        PersonDTO personDTO = FACADE.get(id);
+        PersonDTO personDTO = REPO.get(id);
         PersonDTO jsonPerson = GSON.fromJson(jsonObject, PersonDTO.class);
         if (personDTO == null) return Response.status(404).build();
         if (jsonPerson == null) return Response.status(400).build();
@@ -90,11 +90,11 @@ public class PersonResource {
         personDTO.setFirstname(jsonPerson.getFirstname());
         personDTO.setLastname(jsonPerson.getLastname());
         personDTO.setPhone(jsonPerson.getPhone());
-        FACADE.edit(personDTO);
+        PersonDTO editedPersonDTO = REPO.edit(personDTO);
 
         return Response
                 .ok()
-                .entity(GSON.toJson(personDTO))
+                .entity(GSON.toJson(editedPersonDTO))
                 .build();
     }
 }
