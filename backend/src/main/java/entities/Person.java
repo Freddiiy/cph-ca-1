@@ -79,6 +79,10 @@ public class Person {
         this.lastname = lastname;
     }
 
+    public void addPhone(Phone phone) {
+        this.phones.add(phone);
+    }
+
     public List<Phone> getPhones() {
         return phones;
     }
@@ -107,6 +111,10 @@ public class Person {
         for (Phone phone : this.phones) {
             phone.setOwner(this);
         }
+    }
+
+    public boolean containsHobby(Hobby hobby) {
+        return this.hobbies.contains(hobby);
     }
 
 

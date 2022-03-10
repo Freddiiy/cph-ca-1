@@ -75,6 +75,10 @@ public class PersonDTO {
         this.cityInfo = cityInfo;
     }
 
+    public void addPhone(PhoneDTO phoneDTO) {
+        this.phones.add(phoneDTO);
+    }
+
     public List<PhoneDTO> getPhones() {
         return phones;
     }
@@ -91,7 +95,7 @@ public class PersonDTO {
         this.hobbies = hobbies;
     }
 
-    public static List<PersonDTO> getList(List<Person> personList) {
+    public static List<PersonDTO> convertToDTO(List<Person> personList) {
         List<PersonDTO> personDTOList = new ArrayList<>();
         for (Person person : personList) {
             personDTOList.add(new PersonDTO(person));

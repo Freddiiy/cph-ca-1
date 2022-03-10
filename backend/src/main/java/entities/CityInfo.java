@@ -63,7 +63,7 @@ public class CityInfo {
     }
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private EntityManagerFactory emf =
+    private static final EntityManagerFactory emf = EMF_Creator.createEntityManagerFactory();
 
     public static List<CityInfo> getCityInfo () {
         EntityManager em1 = emf.createEntityManager();

@@ -14,8 +14,8 @@ import java.util.List;
 
 @Path("/person")
 public class PersonResource {
-    private static EntityManagerFactory EMF;
-    private static final PersonRepository REPO = PersonRepository.getFacade(EMF);
+    private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory();
+    private static final PersonRepository REPO = PersonRepository.getRepo(EMF);
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     @GET
@@ -29,7 +29,7 @@ public class PersonResource {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPerson(@PathParam("id") long id) {
-        PersonDTO personDTO = REPO.get(id);
+        PersonDTO personDTO = REPO.getById(id);
         if (personDTO == null) return Response.status(404).build();
 
         return Response
@@ -82,14 +82,13 @@ public class PersonResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updatePerson(@PathParam("id") Long id, String jsonObject) {
-        PersonDTO personDTO = REPO.get(id);
+        PersonDTO personDTO = REPO.getById(id);
         PersonDTO jsonPerson = GSON.fromJson(jsonObject, PersonDTO.class);
         if (personDTO == null) return Response.status(404).build();
         if (jsonPerson == null) return Response.status(400).build();
 
         personDTO.setFirstname(jsonPerson.getFirstname());
         personDTO.setLastname(jsonPerson.getLastname());
-        personDTO.setPhone(jsonPerson.getPhone());
         PersonDTO editedPersonDTO = REPO.edit(personDTO);
 
         return Response
