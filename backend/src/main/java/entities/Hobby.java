@@ -1,5 +1,7 @@
 package entities;
 
+import dtos.HobbyDTO;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +31,15 @@ public class Hobby {
         this.description = description;
     }
 
-    public Hobby()
-    {
+    public Hobby(HobbyDTO hobbyDTO) {
+        if (hobbyDTO.getName() != null) {
+            this.name = hobbyDTO.getName();
+            this.description = hobbyDTO.getDescription();
+        }
+    }
+
+    public Hobby(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -47,5 +56,14 @@ public class Hobby {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public static List<Hobby> convertfromDTO(List<HobbyDTO> hobbieDTOs) {
+        List<Hobby> hobbyList = new ArrayList<>();
+        for (HobbyDTO hobbyDTO: hobbieDTOs) {
+            hobbyList.add(new Hobby(hobbyDTO));
+        }
+
+        return hobbyList;
     }
 }

@@ -2,6 +2,9 @@ package dtos;
 
 import entities.Hobby;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class HobbyDTO {
     private String name;
     private String description;
@@ -32,5 +35,14 @@ public class HobbyDTO {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public static List<HobbyDTO> convertToDTO(List<Hobby> hobbies) {
+        List<HobbyDTO> hobbyDTOList = new ArrayList<>();
+        for (Hobby hobby: hobbies) {
+            hobbyDTOList.add(new HobbyDTO(hobby));
+        }
+
+        return hobbyDTOList;
     }
 }

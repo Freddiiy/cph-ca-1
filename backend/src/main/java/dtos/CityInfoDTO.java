@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import entities.CityInfo;
 import utils.CityInfoApi;
-import utils.EMF_Creator;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;

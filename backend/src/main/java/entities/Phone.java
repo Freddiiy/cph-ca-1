@@ -1,6 +1,10 @@
 package entities;
 
+import dtos.PhoneDTO;
+
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Phone {
@@ -17,17 +21,29 @@ public class Phone {
     private String number;
     private String description;
 
-    public Phone(String number) {
-        this.number = number;
-    }
-
     public Phone(String number, String description) {
         this.number = number;
         this.description = description;
     }
 
+    public Phone(PhoneDTO phoneDTO) {
+        if (phoneDTO.getNumber() != null) {
+            this.number = phoneDTO.getNumber();
+            this.description = phoneDTO.getDescription();
+        }
+    }
+
     public Phone()
     {
+    }
+
+    public static List<Phone> convertFromDTO(List<PhoneDTO> phoneDTOs) {
+        List<Phone> phoneList = new ArrayList<>();
+        for (PhoneDTO phoneDTO : phoneDTOs) {
+            phoneList.add(new Phone(phoneDTO));
+        }
+
+        return phoneList;
     }
 
     public String getNumber() {
