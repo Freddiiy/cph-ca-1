@@ -33,5 +33,3 @@ Plan for Iteration Three:
 
 - - - - - - - Project's Class Diagram - - - - - - -
 ![CA-1 Group 8 v2](https://user-images.githubusercontent.com/78692409/157851158-9481fc4d-5348-4e9b-bbd7-4317829d64b5.png)
-
-<img width="1333" alt="Screenshot 2022-03-11 at 11 35 04" src="https://user-images.githubusercontent.com/78692409/157850984-8df65079-b950-4bd0-8571-2928d5c7715a.png">
