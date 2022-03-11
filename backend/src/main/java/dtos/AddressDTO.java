@@ -1,10 +1,12 @@
 package dtos;
 
 import entities.Address;
+import entities.CityInfo;
 
 public class AddressDTO {
-    public String street;
-    public String description;
+    private String street;
+    private String description;
+    private CityInfoDTO cityInfoDTO;
 
     public AddressDTO(String street, String description) {
         this.street = street;
@@ -15,6 +17,7 @@ public class AddressDTO {
         if (address.street != null) {
             this.street = address.getStreet();
             this.description = address.getDescription();
+            this.cityInfoDTO = new CityInfoDTO(address.getCityInfo());
         }
     }
 
@@ -32,5 +35,13 @@ public class AddressDTO {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public CityInfoDTO getCityInfoDTO() {
+        return cityInfoDTO;
+    }
+
+    public void setCityInfoDTO(CityInfoDTO cityInfoDTO) {
+        this.cityInfoDTO = cityInfoDTO;
     }
 }

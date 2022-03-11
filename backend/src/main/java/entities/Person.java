@@ -1,5 +1,7 @@
 package entities;
 
+import dtos.PersonDTO;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,30 +44,23 @@ public class Person {
         setOwners();
     }
 
+    public Person(PersonDTO personDTO) {
+        if (personDTO.getId() != null) {
+            this.id = personDTO.getId();
+            this.firstname = personDTO.getFirstname();
+            this.lastname = personDTO.getLastname();
+            this.address = new Address(personDTO.getAddress());
+            this.phones = Phone.convertFromDTO(personDTO.getPhones());
+            this.hobbies = Hobby.convertfromDTO(personDTO.getHobbies());
+        }
+    }
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public void setPhones(List<Phone> phones) {
-        this.phones = phones;
-    }
-
-    public void setHobbies(List<Hobby> hobbies) {
-        this.hobbies = hobbies;
-    }
-
-    public void setAddress(Address address) {
-        this.address = address;
-    }
-
-    public void setOwners() {
-        for (int i = 0; i < this.phones.size(); i++) {
-            phones.get(i).setOwner(this);
-        }
     }
 
     public String getFirstname() {
@@ -84,29 +79,44 @@ public class Person {
         this.lastname = lastname;
     }
 
-    public List<Phone> getPhone() {
+    public void addPhone(Phone phone) {
+        this.phones.add(phone);
+    }
+
+    public List<Phone> getPhones() {
         return phones;
     }
 
-    public void setPhone(List<Phone> phones) {
+    public void setPhones(List<Phone> phones) {
         this.phones = phones;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
+    public List<Hobby> getHobbies() {
+        return hobbies;
     }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
+    public void setHobbies(List<Hobby> hobbies) {
+        this.hobbies = hobbies;
     }
 
-    public Date getLastEdited() {
-        return lastEdited;
+    public Address getAddress() {
+        return address;
     }
 
-    public void setLastEdited(Date lastEdited) {
-        this.lastEdited = lastEdited;
+    public void setAddress(Address address) {
+        this.address = address;
     }
+
+    public void setOwners() {
+        for (Phone phone : this.phones) {
+            phone.setOwner(this);
+        }
+    }
+
+    public boolean containsHobby(Hobby hobby) {
+        return this.hobbies.contains(hobby);
+    }
+
 
     @PrePersist
     protected void onCreate() {

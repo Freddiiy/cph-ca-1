@@ -39,6 +39,13 @@ public class CityInfo {
     {
     }
 
+    public CityInfo(CityInfoDTO cityInfoDTO) {
+        if (cityInfoDTO.getCity() != null) {
+            this.zipCode = cityInfoDTO.getZipCode();
+            this.city = cityInfoDTO.getCity();
+        }
+     }
+
     public int getZipCode() {
         return zipCode;
     }
@@ -56,7 +63,7 @@ public class CityInfo {
     }
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    static EntityManagerFactory emf = EMF_Creator.createEntityManagerFactory();
+    private static final EntityManagerFactory emf = EMF_Creator.createEntityManagerFactory();
 
     public static List<CityInfo> getCityInfo () {
         EntityManager em1 = emf.createEntityManager();
