@@ -19,10 +19,11 @@ class PersonRepositoryTest {
     EntityManagerFactory emf = EMF_Creator.createEntityManagerFactoryForTest();
     PersonRepository personRepository = PersonRepository.getRepo(emf);
     PersonDTO personDTO;
+    List<PhoneDTO> phoneDTOList = new ArrayList<>();
+
 
     @BeforeEach
     void setUp() {
-        List<PhoneDTO> phoneDTOList = new ArrayList<>();
         phoneDTOList.add(new PhoneDTO("40404040", "Job"));
         phoneDTOList.add(new PhoneDTO("12345678", "Hjem"));
 
