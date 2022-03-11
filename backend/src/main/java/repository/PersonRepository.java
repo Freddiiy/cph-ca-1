@@ -92,12 +92,10 @@ public class PersonRepository implements IPersonRepository {
     }
 
     @Override
-    public List<PersonDTO> getAllByCity(CityInfoDTO cityInfoDTO) {
+    public List<PersonDTO> getAllByCity(String cityInfoDTO) {
         EntityManager em = getEntityManager();
-
-        TypedQuery<Person> query = em.createQuery("select p from Person p where CityInfo=:cityInfo", Person.class);
-        em.setProperty("cityInfo", new CityInfo(cityInfoDTO));
-
+        TypedQuery<Person> query = em.createQuery("select p from Person p where CityInfo.city=:cityInfo", Person.class);
+        em.setProperty("cityInfo", cityInfoDTO);
         return PersonDTO.convertToDTO(query.getResultList());
     }
 

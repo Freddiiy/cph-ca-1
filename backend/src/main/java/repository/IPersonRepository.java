@@ -14,7 +14,7 @@ public interface IPersonRepository {
     PersonDTO getByPhone(String phone);
     List<PersonDTO> getAll();
     List<PersonDTO> getAllByHobby(String hobby);
-    List<PersonDTO> getAllByCity(CityInfoDTO cityInfoDTO);
+    List<PersonDTO> getAllByCity(String cityInfoDTO);
     PersonDTO edit(PersonDTO personDTO);
     List<CityInfoDTO> getZipCode();
 }
