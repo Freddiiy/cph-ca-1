@@ -2,7 +2,10 @@ package rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dtos.CityInfoDTO;
+import dtos.HobbyDTO;
 import dtos.PersonDTO;
+import entities.Hobby;
 import repository.PersonRepository;
 import utils.EMF_Creator;
 
@@ -97,5 +100,71 @@ public class PersonResource {
                 .build();
     }
 
+    @GET
+    @Path("/{hobby}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response getHobby(@PathParam("hobby") String jsonObejkt) {
+        List<PersonDTO> personDTOSList = REPO.getAllByHobby(jsonObejkt);
+        if (personDTOSList == null) return Response.status(404).build();
+        if (personDTOSList.isEmpty()) return Response.status(404).build();
 
+        return Response
+                .ok()
+                .entity(GSON.toJson(personDTOSList))
+                .build();
+    }
+
+
+    @GET
+    @Path("/numberof/{hobby}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response numberOfPeopleOfHobby(@PathParam("hobby") String jsonObjekt) {
+        List<PersonDTO> personDTOList = REPO.getAllByHobby(jsonObjekt);
+        if (personDTOList == null) return Response.status(404).build();
+
+        return Response
+                .ok()
+                .entity(personDTOList.size())
+                .build();
+    }
+
+    @GET
+    @Path("/city/{city}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response livingInCity(@PathParam("city") String jsonObjekt) {
+        List<PersonDTO> personDTOList = REPO.getAllByCity(jsonObjekt);
+        if (personDTOList == null) return Response.status(404).build();
+        if (personDTOList.isEmpty()) return Response.status(404).build();
+        return Response
+                .ok()
+                .entity(GSON.toJson(personDTOList))
+                .build();
+    }
+
+    @GET
+    @Path("/phone/{phone}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response getPhone(@PathParam("phone") String jsonObjekt) {
+        PersonDTO personDTO = REPO.getByPhone(jsonObjekt);
+        if (personDTO == null) return Response.status(404).build();
+
+        return Response
+                .ok()
+                .entity(GSON.toJson(personDTO))
+                .build();
+    }
+
+    @GET
+    @Path("/zipecode")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response getZipCodes() {
+        List<CityInfoDTO> cityInfoDTOList = REPO.getZipCode();
+        if (cityInfoDTOList == null) return Response.status(404).build();
+
+            return Response
+                    .ok()
+                    .entity(GSON.toJson(cityInfoDTOList))
+                    .build();
+
+    }
 }

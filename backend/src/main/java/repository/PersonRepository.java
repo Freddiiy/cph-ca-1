@@ -19,7 +19,8 @@ public class PersonRepository implements IPersonRepository {
     private static EntityManagerFactory emf;
     private static PersonRepository instance;
 
-    private PersonRepository() {}
+    private PersonRepository() {
+    }
 
     public static PersonRepository getRepo(EntityManagerFactory _emf) {
         if (instance == null) {
@@ -39,7 +40,8 @@ public class PersonRepository implements IPersonRepository {
         try {
             em.getTransaction().begin();
             em.persist(new Person(personDTO));
-            em.getTransaction().commit();;
+            em.getTransaction().commit();
+            ;
         } finally {
             em.close();
         }
@@ -71,18 +73,20 @@ public class PersonRepository implements IPersonRepository {
     }
 
     @Override
-    public PersonDTO getByPhone(PhoneDTO phoneDTO) {
+    public PersonDTO getByPhone(String phone) {
         EntityManager em = getEntityManager();
-        Person person = em.find(Person.class, new Phone(phoneDTO));
+        TypedQuery<Person> query = em.createQuery("SELECT p from Person p where Phone.number=:number", Person.class);
+        em.setProperty("number", phone);
 
-        return new PersonDTO(person);
+
+        return new PersonDTO(query.getSingleResult());
     }
 
     @Override
-    public List<PersonDTO> getAllByHobby(HobbyDTO hobbyDTO) {
+    public List<PersonDTO> getAllByHobby(String hobby) {
         EntityManager em = getEntityManager();
-        TypedQuery<Person> query = em.createQuery("select p from Person p where Hobby=:hobby", Person.class);
-        em.setProperty("hobby", new Hobby(hobbyDTO));
+        TypedQuery<Person> query = em.createQuery("select p from Person p where Hobby.name=:hobby", Person.class);
+        em.setProperty("hobby", hobby);
 
         return PersonDTO.convertToDTO(query.getResultList());
     }
@@ -119,5 +123,12 @@ public class PersonRepository implements IPersonRepository {
         }
 
         return personDTO;
+    }
+
+    @Override
+    public List<CityInfoDTO> getZipCode(){
+        EntityManager em = getEntityManager();
+        TypedQuery<CityInfoDTO> query = em.createQuery("SELECT c FROM CityInfo c", CityInfoDTO.class);
+        return query.getResultList();
     }
 }
