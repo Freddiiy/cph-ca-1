@@ -27,7 +27,7 @@ services:
   web:
     # image:  tomcat:9.0.37-jdk8
     platform: linux/amd64
-    build: ./backend/
+    build: ./tomcat/
     container_name: tomcat_3sem
     restart: unless-stopped
 
