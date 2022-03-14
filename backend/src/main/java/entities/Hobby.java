@@ -19,6 +19,9 @@ public class Hobby {
     @Column(name="description")
     private String description;
 
+    public Hobby() {
+    }
+
     @ManyToMany(mappedBy = "hobbies", fetch = FetchType.LAZY)
     private List<Person> persons = new ArrayList<>();
 

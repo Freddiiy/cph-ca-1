@@ -11,9 +11,10 @@ public interface IPersonRepository {
     PersonDTO add(PersonDTO personDTO);
     PersonDTO delete(Long id);
     PersonDTO getById(Long id);
-    PersonDTO getByPhone(PhoneDTO phoneDTO);
+    PersonDTO getByPhone(String phone);
     List<PersonDTO> getAll();
-    List<PersonDTO> getAllByHobby(HobbyDTO hobbyDTO);
-    List<PersonDTO> getAllByCity(CityInfoDTO cityInfoDTO);
+    List<PersonDTO> getAllByHobby(String hobby);
+    List<PersonDTO> getAllByCity(String cityInfoDTO);
     PersonDTO edit(PersonDTO personDTO);
+    List<CityInfoDTO> getZipCode();
 }
