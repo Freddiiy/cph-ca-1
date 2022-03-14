@@ -1,14 +1,20 @@
 package repository;
 
+import dtos.CityInfoDTO;
+import dtos.HobbyDTO;
 import dtos.PersonDTO;
-import errorhandling.PersonNotFoundException;
+import dtos.PhoneDTO;
 
 import java.util.List;
 
 public interface IPersonRepository {
-    public PersonDTO add(PersonDTO personDTO);
-    public PersonDTO delete(Long id) throws PersonNotFoundException;
-    public PersonDTO get(Long id);
-    public List<PersonDTO> getAll();
-    public PersonDTO edit(PersonDTO personDTO) throws PersonNotFoundException;
+    PersonDTO add(PersonDTO personDTO);
+    PersonDTO delete(Long id);
+    PersonDTO getById(Long id);
+    PersonDTO getByPhone(String phone);
+    List<PersonDTO> getAll();
+    List<PersonDTO> getAllByHobby(String hobby);
+    List<PersonDTO> getAllByCity(String cityInfoDTO);
+    PersonDTO edit(PersonDTO personDTO);
+    List<CityInfoDTO> getZipCode();
 }

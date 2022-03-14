@@ -2,7 +2,10 @@ package rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dtos.CityInfoDTO;
+import dtos.HobbyDTO;
 import dtos.PersonDTO;
+import entities.Hobby;
 import repository.PersonRepository;
 import utils.EMF_Creator;
 
@@ -15,7 +18,7 @@ import java.util.List;
 @Path("/person")
 public class PersonResource {
     private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory();
-    private static final PersonRepository FACADE = PersonRepository.getFacade(EMF);
+    private static final PersonRepository REPO = PersonRepository.getRepo(EMF);
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     @GET
@@ -29,7 +32,7 @@ public class PersonResource {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPerson(@PathParam("id") long id) {
-        PersonDTO personDTO = FACADE.get(id);
+        PersonDTO personDTO = REPO.getById(id);
         if (personDTO == null) return Response.status(404).build();
 
         return Response
@@ -41,7 +44,7 @@ public class PersonResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll() {
-        List<PersonDTO> personDTOList = FACADE.getAll();
+        List<PersonDTO> personDTOList = REPO.getAll();
         if (personDTOList == null) return Response.status(404).build();
 
         return Response
@@ -56,7 +59,7 @@ public class PersonResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createPerson(String jsonObject) {
         PersonDTO personDTO = GSON.fromJson(jsonObject, PersonDTO.class);
-        PersonDTO returnedPersonDTO = FACADE.add(personDTO);
+        PersonDTO returnedPersonDTO = REPO.add(personDTO);
         if (returnedPersonDTO == null) return Response.status(404).build();
 
         return Response
@@ -68,7 +71,7 @@ public class PersonResource {
     @DELETE
     @Path("/{id}")
     public Response deletePerson(@PathParam("id") Long id) {
-        PersonDTO personDTO = FACADE.delete(id);
+        PersonDTO personDTO = REPO.delete(id);
         if (personDTO == null) return Response.status(404).build();
 
         return Response
@@ -82,19 +85,86 @@ public class PersonResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updatePerson(@PathParam("id") Long id, String jsonObject) {
-        PersonDTO personDTO = FACADE.get(id);
+        PersonDTO personDTO = REPO.getById(id);
         PersonDTO jsonPerson = GSON.fromJson(jsonObject, PersonDTO.class);
         if (personDTO == null) return Response.status(404).build();
         if (jsonPerson == null) return Response.status(400).build();
 
         personDTO.setFirstname(jsonPerson.getFirstname());
         personDTO.setLastname(jsonPerson.getLastname());
-        personDTO.setPhone(jsonPerson.getPhone());
-        FACADE.edit(personDTO);
+        PersonDTO editedPersonDTO = REPO.edit(personDTO);
+
+        return Response
+                .ok()
+                .entity(GSON.toJson(editedPersonDTO))
+                .build();
+    }
+
+    @GET
+    @Path("/{hobby}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response getHobby(@PathParam("hobby") String jsonObejkt) {
+        List<PersonDTO> personDTOSList = REPO.getAllByHobby(jsonObejkt);
+        if (personDTOSList == null) return Response.status(404).build();
+        if (personDTOSList.isEmpty()) return Response.status(404).build();
+
+        return Response
+                .ok()
+                .entity(GSON.toJson(personDTOSList))
+                .build();
+    }
+
+
+    @GET
+    @Path("/numberof/{hobby}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response numberOfPeopleOfHobby(@PathParam("hobby") String jsonObjekt) {
+        List<PersonDTO> personDTOList = REPO.getAllByHobby(jsonObjekt);
+        if (personDTOList == null) return Response.status(404).build();
+
+        return Response
+                .ok()
+                .entity(personDTOList.size())
+                .build();
+    }
+
+    @GET
+    @Path("/city/{city}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response livingInCity(@PathParam("city") String jsonObjekt) {
+        List<PersonDTO> personDTOList = REPO.getAllByCity(jsonObjekt);
+        if (personDTOList == null) return Response.status(404).build();
+        if (personDTOList.isEmpty()) return Response.status(404).build();
+        return Response
+                .ok()
+                .entity(GSON.toJson(personDTOList))
+                .build();
+    }
+
+    @GET
+    @Path("/phone/{phone}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response getPhone(@PathParam("phone") String jsonObjekt) {
+        PersonDTO personDTO = REPO.getByPhone(jsonObjekt);
+        if (personDTO == null) return Response.status(404).build();
 
         return Response
                 .ok()
                 .entity(GSON.toJson(personDTO))
                 .build();
+    }
+
+    @GET
+    @Path("/zipecode")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response getZipCodes() {
+        List<CityInfoDTO> cityInfoDTOList = REPO.getZipCode();
+        if (cityInfoDTOList == null) return Response.status(404).build();
+
+            return Response
+                    .ok()
+                    .entity(GSON.toJson(cityInfoDTOList))
+                    .build();
+
     }
 }

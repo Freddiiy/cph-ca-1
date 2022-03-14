@@ -9,21 +9,30 @@ public class PersonDTO {
     private Long id;
     private String firstname;
     private String lastname;
-    private String phone;
+    private AddressDTO address;
+    private CityInfoDTO cityInfo;
+    private List<PhoneDTO> phones;
+    private List<HobbyDTO> hobbies;
+
+    public PersonDTO(String firstname, String lastname, AddressDTO address, CityInfoDTO cityInfo, List<PhoneDTO> phones, List<HobbyDTO> hobbies) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.address = address;
+        this.cityInfo = cityInfo;
+        this.phones = phones;
+        this.hobbies = hobbies;
+    }
 
     public PersonDTO(Person person) {
         if (person.getId() != null) {
             this.id = person.getId();
             this.firstname = person.getFirstname();
             this.lastname = person.getLastname();
-            this.phone = person.getPhone();
+            this.address = new AddressDTO(person.getAddress());
+            this.cityInfo = new CityInfoDTO(person.getAddress().getCityInfo());
+            this.phones = PhoneDTO.convertToDTO(person.getPhones());
+            this.hobbies = HobbyDTO.convertToDTO(person.getHobbies());
         }
-    }
-
-    public PersonDTO(String firstname, String lastname, String phone) {
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.phone = phone;
     }
 
     public Long getId() {
@@ -50,20 +59,61 @@ public class PersonDTO {
         this.lastname = lastname;
     }
 
-    public String getPhone() {
-        return phone;
+    public AddressDTO getAddress() {
+        return address;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setAddress(AddressDTO address) {
+        this.address = address;
     }
 
-    public static List<PersonDTO> getList(List<Person> personList) {
+    public CityInfoDTO getCityInfo() {
+        return cityInfo;
+    }
+
+    public void setCityInfo(CityInfoDTO cityInfo) {
+        this.cityInfo = cityInfo;
+    }
+
+    public void addPhone(PhoneDTO phoneDTO) {
+        this.phones.add(phoneDTO);
+    }
+
+    public List<PhoneDTO> getPhones() {
+        return phones;
+    }
+
+    public void setPhones(List<PhoneDTO> phones) {
+        this.phones = phones;
+    }
+
+    public List<HobbyDTO> getHobbies() {
+        return hobbies;
+    }
+
+    public void setHobbies(List<HobbyDTO> hobbies) {
+        this.hobbies = hobbies;
+    }
+
+    public static List<PersonDTO> convertToDTO(List<Person> personList) {
         List<PersonDTO> personDTOList = new ArrayList<>();
         for (Person person : personList) {
             personDTOList.add(new PersonDTO(person));
         }
 
         return personDTOList;
+    }
+
+    @Override
+    public String toString() {
+        return "PersonDTO{" +
+                "id=" + id +
+                ", firstname='" + firstname + '\'' +
+                ", lastname='" + lastname + '\'' +
+                ", address=" + address +
+                ", cityInfo=" + cityInfo +
+                ", phones=" + phones +
+                ", hobbies=" + hobbies +
+                '}';
     }
 }

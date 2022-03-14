@@ -17,6 +17,8 @@
         <!-- IMPORTANT-1: If your server uses https (via NGINX) use your DOMAIN NAME and https below: -->
         <!-- IMPORTANT-2: Observe we are NOT using /manager/html but /manager/text for script uploads --> 
 	    <remote.server>https://sem3.fredoku.com/manager/text</remote.server>
+        <remote.user>dev</remote.user>
+        <remote.password>ax2</remote.password>
 
         <!-- TODO: Add your own database name -->
         <!-- IMPORTANT-1: The database should exist on your droplet -->
@@ -28,7 +30,7 @@
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
             <artifactId>org.eclipse.persistence.jpa</artifactId>
-            <version>3.0.2</version>
+            <version>2.7.7</version>
         </dependency>
         
         <dependency>
