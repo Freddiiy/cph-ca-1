@@ -4,7 +4,7 @@ services:
     # image: mysql:8.0
     platform: linux/amd64
     build: ./mysql/
-    container_name: mysql_3sem
+    container_name: mysql_server
     restart: unless-stopped
 
     environment:
@@ -28,7 +28,7 @@ services:
     # image:  tomcat:9.0.37-jdk8
     platform: linux/amd64
     build: ./tomcat/
-    container_name: tomcat_3sem
+    container_name: tomcat_server
     restart: unless-stopped
 
     # ---- IMPORTANT ----
