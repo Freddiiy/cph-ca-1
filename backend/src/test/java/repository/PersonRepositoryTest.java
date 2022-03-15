@@ -7,7 +7,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import utils.EMF_Creator;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +51,7 @@ class PersonRepositoryTest {
 
     @Test
     void add() {
+        emf.createEntityManager();
         PersonDTO actual = personRepository.add(personDTO);
         PersonDTO expected = personDTO;
         assertEquals(expected.equals(actual), actual.equals(expected));
