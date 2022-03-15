@@ -76,8 +76,8 @@ class PersonResourceTest {
     public static void setUpClass() {
         //This method must be called before you request the EntityManagerFactory
         EMF_Creator.startREST_TestWithDB();
-        emf = EMF_Creator.createEntityManagerFactoryForTest();
 
+        emf = EMF_Creator.createEntityManagerFactoryForTest();
         httpServer = startServer();
         //Setup RestAssured
         RestAssured.baseURI = SERVER_URL;
