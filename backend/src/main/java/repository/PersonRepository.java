@@ -80,15 +80,17 @@ public class PersonRepository implements IPersonRepository {
     @Override
     public PersonDTO getByPhone(String phone) {
         EntityManager em = getEntityManager();
-        Phone query = em.createQuery("SELECT p FROM Phone p WHERE p.number=:number", Phone.class)
-                .setParameter("number", phone)
-                .getSingleResult();
+        TypedQuery<Phone> query = em.createQuery("SELECT p FROM Phone p WHERE p.number=:number", Phone.class);
+
+        em.setProperty("number", phone);
+
+        query.getSingleResult();
 
         Person result = em.createQuery("SELECT p FROM Person p WHERE p.id=:owner", Person.class)
-                .setParameter("owner", query.getOwner().getId())
+                .setParameter("owner", query.getSingleResult().getOwner().getId())
                 .getSingleResult();
 
-        PersonDTO personDTO = getById(query.getOwner().getId());
+        PersonDTO personDTO = getById(query.getSingleResult().getOwner().getId());
         if (personDTO == null) {
             throw new EntityExistsException("Person with phone :" + phone + " couldn't be found.");
         }
