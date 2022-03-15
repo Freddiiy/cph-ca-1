@@ -170,15 +170,9 @@ class PersonRepositoryTest {
     //Add Person to Database ( PASSED )
     @Test
     void add() {
-<<<<<<< HEAD
-       /* emf.createEntityManager();
-        PersonDTO actual = personRepository.add(personDTO);
-        PersonDTO expected = personDTO;
-=======
->>>>>>> a16f5b39519923d4326749b8c3af27b66c7dc389
         PersonDTO actual = personRepository.add(personDTO_1);
         PersonDTO expected = personDTO_1;
-        assertEquals(expected.equals(actual), actual.equals(expected));*/
+        assertEquals(expected.equals(actual), actual.equals(expected));
     }
 
         //Delete person from Database ( PASSED )

@@ -3,36 +3,47 @@ package rest;
 import dtos.*;
 import entities.*;
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import io.restassured.parsing.Parser;
-import jakarta.ws.rs.core.UriBuilder;
-import org.apache.http.impl.bootstrap.HttpServer;
+import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.util.HttpStatus;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.jupiter.api.*;
+import repository.PersonRepository;
 import utils.EMF_Creator;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.Matchers.*;
 
-//Uncomment the line below, to temporarily disable this test
-@Disabled
 
-public class RenameMeResourceTest {
+class PersonResourceTest {
+
+    private static EntityManagerFactory emf;
+    private EntityManager em;
+    private PersonRepository personRepository;
 
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api";
 
-
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
     private static HttpServer httpServer;
-    private static EntityManagerFactory emf; //Testing add()
 
+    static HttpServer startServer() {
+        ResourceConfig rc = ResourceConfig.forApplication(new ApplicationConfig());
+        return GrizzlyHttpServerFactory.createHttpServer(BASE_URI, rc);
+    }
+
+
+    //Testing add()
     List<PhoneDTO> phoneDTOList_1 = new ArrayList<>();
     List<HobbyDTO> hobbyDTOList_1 = new ArrayList<>();
     PersonDTO personDTO_1;
@@ -61,11 +72,6 @@ public class RenameMeResourceTest {
     Person person_5;
 
 
-    static HttpServer startServer() {
-        ResourceConfig rc = ResourceConfig.forApplication(new ApplicationConfig());
-        return GrizzlyHttpServerFactory.createHttpServer(BASE_URI, rc);
-    }
-
     @BeforeAll
     public static void setUpClass() {
         //This method must be called before you request the EntityManagerFactory
@@ -88,10 +94,11 @@ public class RenameMeResourceTest {
         httpServer.shutdownNow();
     }
 
-    // Setup the DataBase (used by the test-server and this test) in a known state BEFORE EACH TEST
-    //TODO -- Make sure to change the EntityClass used below to use YOUR OWN (renamed) Entity class
     @BeforeEach
-    public void setUp() {
+    void setUp() {
+        em = emf.createEntityManager();
+        personRepository = PersonRepository.getRepo(emf);
+
         //Testing add()
         PhoneDTO beansDusMobil = new PhoneDTO("22505044", "HotlineBean");
         phoneDTOList_1.add(beansDusMobil);
@@ -156,22 +163,33 @@ public class RenameMeResourceTest {
         person_5.setAddress(weinellAddress);
 
 
-        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
 
+        //Testing delete()
+        em.persist(person_1);
+        em.persist(person_2);
+
+        //Testing getByPhone()
+        em.persist(person_3);
+        em.persist(person_4);
+
+        //Testing edit()
+        em.persist(person_5);
+
+        em.getTransaction().commit();
+
+    }
+
+    @AfterEach
+    void tearDown() {
         try {
             em.getTransaction().begin();
-
-            //Testing delete()
-            em.persist(person_1);
-            em.persist(person_2);
-
-            //Testing getByPhone()
-            em.persist(person_3);
-            em.persist(person_4);
-
-            //Testing edit()
-            em.persist(person_5);
-
+            //OBS Rækkefølgen er ekstrem vigtig her v
+            em.createQuery("DELETE FROM Phone ").executeUpdate();
+            em.createQuery("DELETE FROM Hobby ").executeUpdate();
+            em.createQuery("DELETE FROM Person ").executeUpdate();
+            em.createQuery("DELETE FROM Address ").executeUpdate();
+            em.createQuery("DELETE FROM CityInfo ").executeUpdate();
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -179,31 +197,13 @@ public class RenameMeResourceTest {
     }
 
     @Test
-    public void testServerIsUp() {
-        System.out.println("Testing is server UP");
-        given().when().get("/xxx").then().statusCode(200);
-    }
-
-    //This test assumes the database contains two rows
-    @Test
-    public void testDummyMsg() throws Exception {
+    void demo_test(){
         given()
-                .contentType("application/json")
-                .get("/xxx/").then()
+                .contentType(ContentType.JSON)
+                .get("/parent/demo")
+                .then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("msg", equalTo("Hello World"));
     }
-
-    @Test
-    public void testCount() throws Exception {
-        given()
-                .contentType("application/json")
-                .get("/xxx/count").then()
-                .assertThat()
-                .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("count", equalTo(2));
-    }
 }
-
-
