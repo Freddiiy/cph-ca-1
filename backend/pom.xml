@@ -17,8 +17,8 @@
         <!-- IMPORTANT-1: If your server uses https (via NGINX) use your DOMAIN NAME and https below: -->
         <!-- IMPORTANT-2: Observe we are NOT using /manager/html but /manager/text for script uploads --> 
 	    <remote.server>https://sem3.fredoku.com/manager/text</remote.server>
-        <remote.user>admin</remote.user>
-        <remote.password>admin</remote.password>
+        <remote.user>dev</remote.user>
+        <remote.password>ax2</remote.password>
 
         <!-- TODO: Add your own database name -->
         <!-- IMPORTANT-1: The database should exist on your droplet -->
