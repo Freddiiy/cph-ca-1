@@ -84,9 +84,7 @@ public class PersonRepository implements IPersonRepository {
                 .setParameter("number", phone)
                 .getSingleResult();
 
-        Person result = em.createQuery("SELECT p FROM Person p WHERE p.id=:owner", Person.class)
-                .setParameter("owner", query.getOwner().getId())
-                .getSingleResult();
+        Person result = em.find(Person.class, query.getOwner().getId());
 
         PersonDTO personDTO = getById(query.getOwner().getId());
         if (personDTO == null) {
