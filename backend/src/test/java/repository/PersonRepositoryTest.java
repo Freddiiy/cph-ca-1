@@ -14,21 +14,19 @@ import utils.EMF_Creator;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.ws.rs.core.UriBuilder;
 
+import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Disabled
 class PersonRepositoryTest {
 
-    private static final EntityManagerFactory emf = EMF_Creator.createEntityManagerFactoryForTest();
+    private EntityManagerFactory emf;
     private EntityManager em;
-
-    private static final PersonRepository personRepository = PersonRepository.getRepo(emf);
+    private PersonRepository personRepository;
 
 
     //Testing add()
@@ -62,6 +60,10 @@ class PersonRepositoryTest {
 
     @BeforeEach
     void setUp() {
+        emf = EMF_Creator.createEntityManagerFactoryForTest();
+        em = emf.createEntityManager();
+        personRepository = PersonRepository.getRepo(emf);
+
         //Testing add()
         PhoneDTO beansDusMobil = new PhoneDTO("22505044", "HotlineBean");
         phoneDTOList_1.add(beansDusMobil);
@@ -88,7 +90,7 @@ class PersonRepositoryTest {
         Hobby gallerHobby = new Hobby("Elden Ring", "YOU DIED");
         hobbyList_2.add(gallerHobby);
         Address gallerAddress = new Address("BingBong vej 58", "SpektrumCentrum");
-        gallerAddress.setCityInfo(new CityInfo(4100,"Ringested"));
+        gallerAddress.setCityInfo(new CityInfo(4100, "Ringested"));
         person_2 = new Person("Galler", "Thicci", phoneList_2);
         person_2.setHobbies(hobbyList_2);
         person_2.setAddress(gallerAddress);
@@ -98,7 +100,7 @@ class PersonRepositoryTest {
         phoneList_3.add(oliPhone);
         Hobby oliHobby = new Hobby("minimalistisk kunst-entusiast", "se maling tørre");
         hobbyList_3.add(oliHobby);
-        Address oliAddress = new Address ("LimSpiser vej 48", "BingBy");
+        Address oliAddress = new Address("LimSpiser vej 48", "BingBy");
         oliAddress.setCityInfo(new CityInfo(3100, "Hornbæk"));
         person_3 = new Person("Oliver", "Snoo", phoneList_3);
         person_3.setHobbies(hobbyList_3);
@@ -110,7 +112,7 @@ class PersonRepositoryTest {
 //        hobbyList_4.add(fooHobby);
         Address fooAddress = new Address("foo", "bar");
         fooAddress.setCityInfo(new CityInfo(3400, "Hillerød"));
-        person_4 = new Person("foo","bar", phoneList_4);
+        person_4 = new Person("foo", "bar", phoneList_4);
         person_4.setHobbies(hobbyList_3);
         person_4.setAddress(fooAddress);
 
@@ -126,32 +128,39 @@ class PersonRepositoryTest {
         person_5.setAddress(weinellAddress);
 
 
+        em.getTransaction().begin();
 
-        EntityManager em = emf.createEntityManager();
+        //Testing delete()
+        em.persist(person_1);
+        em.persist(person_2);
 
+        //Testing getByPhone()
+        em.persist(person_3);
+        em.persist(person_4);
+
+        //Testing edit()
+        em.persist(person_5);
+
+        em.getTransaction().commit();
+
+    }
+
+    @AfterEach
+    void tearDown() {
         try {
             em.getTransaction().begin();
-
-            //Testing delete()
-            em.persist(person_1);
-            em.persist(person_2);
-
-            //Testing getByPhone()
-            em.persist(person_3);
-            em.persist(person_4);
-
-            //Testing edit()
-            em.persist(person_5);
-
+            //OBS Rækkefølgen er ekstrem vigtig her v
+            em.createQuery("DELETE FROM Phone ").executeUpdate();
+            em.createQuery("DELETE FROM Hobby ").executeUpdate();
+            em.createQuery("DELETE FROM Person ").executeUpdate();
+            em.createQuery("DELETE FROM Address ").executeUpdate();
+            em.createQuery("DELETE FROM CityInfo ").executeUpdate();
             em.getTransaction().commit();
         } finally {
             em.close();
         }
     }
 
-    @AfterEach
-    void tearDown() {
-    }
 
     @Test
     void getRepo() {
@@ -161,12 +170,18 @@ class PersonRepositoryTest {
     //Add Person to Database ( PASSED )
     @Test
     void add() {
+<<<<<<< HEAD
+       /* emf.createEntityManager();
+        PersonDTO actual = personRepository.add(personDTO);
+        PersonDTO expected = personDTO;
+=======
+>>>>>>> a16f5b39519923d4326749b8c3af27b66c7dc389
         PersonDTO actual = personRepository.add(personDTO_1);
         PersonDTO expected = personDTO_1;
-        assertEquals(expected.equals(actual), actual.equals(expected));
+        assertEquals(expected.equals(actual), actual.equals(expected));*/
     }
 
-    //Delete person from Database ( PASSED )
+        //Delete person from Database ( PASSED )
     @Test
     void delete() {
         PersonDTO actual = personRepository.delete(person_1.getId());
@@ -192,20 +207,18 @@ class PersonRepositoryTest {
 
         assertNotNull(actual);
     }
-/*
+
     //Get all Persons with a given hobby ( PASSED )
     @Test
     void getAllByHobby() {
         List<PersonDTO> expected = new ArrayList<>();
-        expected.add(personRepository.getById(1L)); //foo
-        expected.add(personRepository.getById(2L)); //Oliver
+        expected.add(new PersonDTO(person_4)); //foo
+        expected.add(new PersonDTO(person_3)); //Oliver
 
         List<PersonDTO> actual = personRepository.getAllByHobby("minimalistisk kunst-entusiast");
 
         assertEquals(expected.equals(actual), actual.equals(expected));
     }
-
- */
 
     //Get all Persons living in a given city ( PASSED )
     @Test
@@ -223,11 +236,11 @@ class PersonRepositoryTest {
         }
         assertNotNull(actual);
     }
-/*
+
     //Edit Persons ( PASSED )
     @Test
     void edit() {
-        PersonDTO actual_preEdit = personRepository.getById(4l);
+        PersonDTO actual_preEdit = new PersonDTO(person_5);
         PersonDTO actual_postEdit = actual_preEdit;
         actual_postEdit.setFirstname("Nikolaj");
 
@@ -238,6 +251,4 @@ class PersonRepositoryTest {
         assertEquals(expectedName, actual_postEdit.getFirstname());
 
     }
-
- */
 }
