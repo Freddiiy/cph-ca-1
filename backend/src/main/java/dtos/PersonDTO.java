@@ -103,4 +103,17 @@ public class PersonDTO {
 
         return personDTOList;
     }
+
+    @Override
+    public String toString() {
+        return "PersonDTO{" +
+                "id=" + id +
+                ", firstname='" + firstname + '\'' +
+                ", lastname='" + lastname + '\'' +
+                ", address=" + address +
+                ", cityInfo=" + cityInfo +
+                ", phones=" + phones +
+                ", hobbies=" + hobbies +
+                '}';
+    }
 }

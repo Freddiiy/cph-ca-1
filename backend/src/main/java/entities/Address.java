@@ -17,7 +17,7 @@ public class Address {
     @OneToMany(mappedBy = "address") //Vi får sikkert en fejl her. Mvh Oli
     private List<Person> residents = new ArrayList<>();
 
-    @ManyToOne(fetch= FetchType.LAZY)
+    @ManyToOne(fetch= FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name="cityInfo")
     private CityInfo cityInfo;
 

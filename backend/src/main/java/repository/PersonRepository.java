@@ -1,17 +1,16 @@
 package repository;
 
 import dtos.CityInfoDTO;
-import dtos.HobbyDTO;
 import dtos.PersonDTO;
-import dtos.PhoneDTO;
-import entities.CityInfo;
 import entities.Hobby;
 import entities.Person;
 import entities.Phone;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PersonRepository implements IPersonRepository {
@@ -55,6 +54,12 @@ public class PersonRepository implements IPersonRepository {
 
         try {
             em.getTransaction().begin();
+            for (Phone phone : person.getPhones()) {
+                em.remove(phone);
+            }
+            for (Hobby hobby : person.getHobbies() ) {
+                em.remove(hobby);
+            }
             em.remove(person);
             em.getTransaction().commit();
         } finally {
@@ -75,34 +80,43 @@ public class PersonRepository implements IPersonRepository {
     @Override
     public PersonDTO getByPhone(String phone) {
         EntityManager em = getEntityManager();
-        TypedQuery<Person> query = em.createQuery("SELECT p from Person p where Phone.number=:number", Person.class);
-        em.setProperty("number", phone);
+        Phone query = em.createQuery("SELECT p FROM Phone p WHERE p.number=:number", Phone.class)
+                .setParameter("number", phone)
+                .getSingleResult();
 
+        Person result = em.createQuery("SELECT p FROM Person p WHERE p.id=:owner", Person.class)
+                .setParameter("owner", query.getOwner().getId())
+                .getSingleResult();
 
-        return new PersonDTO(query.getSingleResult());
+        PersonDTO personDTO = getById(query.getOwner().getId());
+        if (personDTO == null) {
+            throw new EntityExistsException("Person with phone :" + phone + " couldn't be found.");
+        }
+
+        return new PersonDTO(result);
     }
 
     @Override
     public List<PersonDTO> getAllByHobby(String hobby) {
         EntityManager em = getEntityManager();
-        TypedQuery<Person> query = em.createQuery("select p from Person p where Hobby.name=:hobby", Person.class);
-        em.setProperty("hobby", hobby);
-
-        return PersonDTO.convertToDTO(query.getResultList());
+        List<Person> hobby_query = em.createQuery("SELECT h.persons FROM Hobby h WHERE h.name=:hobby", Person.class)
+                .setParameter("hobby", hobby)
+                .getResultList();
+        return PersonDTO.convertToDTO(hobby_query);
     }
 
     @Override
-    public List<PersonDTO> getAllByCity(String cityInfoDTO) {
+    public List<PersonDTO> getAllByCity(String cityInfo) {
         EntityManager em = getEntityManager();
-        TypedQuery<Person> query = em.createQuery("select p from Person p where CityInfo.city=:cityInfo", Person.class);
-        em.setProperty("cityInfo", cityInfoDTO);
+        TypedQuery<Person> query = em.createQuery("SELECT p FROM Person p WHERE p.address.cityInfo.id=:cityInfo", Person.class)
+                .setParameter("cityInfo", Long.parseLong(cityInfo));
         return PersonDTO.convertToDTO(query.getResultList());
     }
 
     @Override
     public List<PersonDTO> getAll() {
         EntityManager em = getEntityManager();
-        TypedQuery<Person> query = em.createQuery("select p from Person p", Person.class);
+        TypedQuery<Person> query = em.createQuery("SELECT p FROM Person p", Person.class);
 
         return PersonDTO.convertToDTO(query.getResultList());
     }
@@ -110,17 +124,17 @@ public class PersonRepository implements IPersonRepository {
     @Override
     public PersonDTO edit(PersonDTO personDTO) {
         EntityManager em = getEntityManager();
-        if (personDTO.getId() == null) return null;
-
+        Person person = new Person(personDTO);
+        if (person.getId() == null) return null;
         try {
             em.getTransaction().begin();
-            em.merge(personDTO);
+            em.merge(person);
             em.getTransaction().commit();
         } finally {
             em.close();
         }
 
-        return personDTO;
+        return new PersonDTO(person);
     }
 
     @Override

@@ -85,4 +85,8 @@ public class Phone {
     {
         this.owner = owner;
     }
+
+    public Person getOwner() {
+        return owner;
+    }
 }

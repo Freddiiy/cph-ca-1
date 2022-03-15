@@ -23,8 +23,8 @@ public class Person {
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinTable(name = "HOBBY_PERSON",
-        joinColumns = @JoinColumn(name ="hobby_id", referencedColumnName = "id"),
-        inverseJoinColumns = @JoinColumn(name ="person_id", referencedColumnName = "id"))
+        joinColumns = @JoinColumn(name ="person_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name ="hobby_id", referencedColumnName = "id"))
     private List<Hobby> hobbies = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
