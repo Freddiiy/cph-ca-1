@@ -103,8 +103,8 @@ public class PersonResource {
     @GET
     @Path("/hobby/{hobby}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response getHobby(@PathParam("hobby") String jsonObejkt) {
-        List<PersonDTO> personDTOSList = REPO.getAllByHobby(jsonObejkt);
+    public Response getHobby(@PathParam("hobby") String jsonObject) {
+        List<PersonDTO> personDTOSList = REPO.getAllByHobby(jsonObject);
         if (personDTOSList == null) return Response.status(404).build();
         if (personDTOSList.isEmpty()) return Response.status(404).build();
 
@@ -118,8 +118,8 @@ public class PersonResource {
     @GET
     @Path("/numberof/{hobby}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response numberOfPeopleOfHobby(@PathParam("hobby") String jsonObjekt) {
-        List<PersonDTO> personDTOList = REPO.getAllByHobby(jsonObjekt);
+    public Response numberOfPeopleOfHobby(@PathParam("hobby") String jsonObject) {
+        List<PersonDTO> personDTOList = REPO.getAllByHobby(jsonObject);
         if (personDTOList == null) return Response.status(404).build();
 
         return Response
@@ -131,8 +131,8 @@ public class PersonResource {
     @GET
     @Path("/city/{city}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response livingInCity(@PathParam("city") String jsonObjekt) {
-        List<PersonDTO> personDTOList = REPO.getAllByCity(jsonObjekt);
+    public Response livingInCity(@PathParam("city") String jsonObject) {
+        List<PersonDTO> personDTOList = REPO.getAllByCity(jsonObject);
         if (personDTOList == null) return Response.status(404).build();
         if (personDTOList.isEmpty()) return Response.status(404).build();
         return Response
@@ -144,8 +144,8 @@ public class PersonResource {
     @GET
     @Path("/phone/{phone}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response getPhone(@PathParam("phone") String jsonObjekt) {
-        PersonDTO personDTO = REPO.getByPhone(jsonObjekt);
+    public Response getPhone(@PathParam("phone") String jsonObject) {
+        PersonDTO personDTO = REPO.getByPhone(jsonObject);
         if (personDTO == null) return Response.status(404).build();
 
         return Response
