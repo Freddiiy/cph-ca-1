@@ -5,10 +5,6 @@ import entities.*;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.parsing.Parser;
-<<<<<<< HEAD
-import javax.ws.rs.core.UriBuilder;
-=======
->>>>>>> fbfc532a2c3fe5098079680eaec57758b8eb25ac
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.util.HttpStatus;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
@@ -34,7 +30,6 @@ import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.hamcrest.Matchers.*;
 
-<<<<<<< HEAD
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,25 +39,15 @@ import org.junit.jupiter.api.Test;
 
 
 public class PersonResourceTest {
-=======
-
-class PersonResourceTest {
-
-    private static EntityManagerFactory emf;
->>>>>>> fbfc532a2c3fe5098079680eaec57758b8eb25ac
 
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api";
 
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
-<<<<<<< HEAD
     private static HttpServer httpServer;
     private static EntityManagerFactory emf; //Testing add()
     private EntityManager em;
     private PersonRepository personRepository;
-=======
-    static HttpServer httpServer;
->>>>>>> fbfc532a2c3fe5098079680eaec57758b8eb25ac
 
 
     static HttpServer startServer() {
@@ -99,15 +84,6 @@ class PersonResourceTest {
     List<Hobby> hobbyList_5 = new ArrayList<>();
     Person person_5;
 
-
-<<<<<<< HEAD
-    static HttpServer startServer() {
-        ResourceConfig rc = ResourceConfig.forApplication(new ApplicationConfig());
-        return  GrizzlyHttpServerFactory.createHttpServer(BASE_URI,rc);
-    }
-
-=======
->>>>>>> fbfc532a2c3fe5098079680eaec57758b8eb25ac
     @BeforeAll
     public static void setUpClass() {
         //This method must be called before you request the EntityManagerFactory
@@ -225,32 +201,13 @@ class PersonResourceTest {
         }
 
     }
-    @AfterEach
-    void tearDown() {
-        try {
-            em.getTransaction().begin();
-            //OBS Rækkefølgen er ekstrem vigtig her v
-            em.createQuery("DELETE FROM Phone ").executeUpdate();
-            em.createQuery("DELETE FROM Hobby ").executeUpdate();
-            em.createQuery("DELETE FROM Person ").executeUpdate();
-            em.createQuery("DELETE FROM Address ").executeUpdate();
-            em.createQuery("DELETE FROM CityInfo ").executeUpdate();
-            em.getTransaction().commit();
-        } finally {
-            em.close();
-        }
-    }
+
     @Test
     void demo_test(){
         given()
-<<<<<<< HEAD
-                .contentType("application/json")
-                .get("/test/").then()
-=======
                 .contentType(ContentType.JSON)
                 .get("/person/test")
                 .then()
->>>>>>> fbfc532a2c3fe5098079680eaec57758b8eb25ac
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("msg", equalTo("Hello World"));

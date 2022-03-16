@@ -4,10 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dtos.*;
 import entities.*;
-<<<<<<< HEAD
-//import jakarta.ws.rs.core.Application;
-=======
->>>>>>> fbfc532a2c3fe5098079680eaec57758b8eb25ac
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -173,11 +169,7 @@ class PersonRepositoryTest {
     //Add Person to Database ( PASSED )
     @Test
     void add() {
-<<<<<<< HEAD
 
-    emf.createEntityManager();
-=======
->>>>>>> fbfc532a2c3fe5098079680eaec57758b8eb25ac
         PersonDTO actual = personRepository.add(personDTO_1);
         PersonDTO expected = personDTO_1;
         assertEquals(expected.equals(actual), actual.equals(expected));
@@ -251,6 +243,5 @@ class PersonRepositoryTest {
         String expectedName = "Nikolaj";
 
         assertEquals(expectedName, actual_postEdit.getFirstname());
-
     }
 }

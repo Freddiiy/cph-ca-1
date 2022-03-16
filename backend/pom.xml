@@ -44,10 +44,7 @@
             <artifactId>jaxrs-ri</artifactId>
             <version>2.32</version>
         </dependency>
-<<<<<<< HEAD
 
-=======
->>>>>>> fbfc532a2c3fe5098079680eaec57758b8eb25ac
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
@@ -114,11 +111,7 @@
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
-<<<<<<< HEAD
             <version>3.3.0</version>
-=======
-            <version>4.5.1</version>
->>>>>>> fbfc532a2c3fe5098079680eaec57758b8eb25ac
             <scope>test</scope>
         </dependency>
 
