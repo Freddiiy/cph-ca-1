@@ -153,7 +153,8 @@ public class PersonRepository implements IPersonRepository {
     }
 
     public static List<CityInfo> getCityInfo () {
-        EntityManager em1 = emf.createEntityManager();
+        EntityManagerFactory _emf = EMF_Creator.createEntityManagerFactory();
+        EntityManager em1 = _emf.createEntityManager();
         TypedQuery<CityInfo> query = em1.createQuery("select c from CityInfo c", CityInfo.class);
         System.out.println(query.getResultList().size());
 
@@ -189,7 +190,7 @@ public class PersonRepository implements IPersonRepository {
             }
 
             for (CityInfo cityInfo : convertedCities) {
-                EntityManager em2 = emf.createEntityManager();
+                EntityManager em2 = _emf.createEntityManager();
                 try {
                     em2.getTransaction().begin();
                     em2.persist(cityInfo);

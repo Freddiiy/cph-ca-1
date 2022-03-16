@@ -1,9 +1,6 @@
 package repository;
 
-import entities.Address;
-import entities.Hobby;
-import entities.Person;
-import entities.Phone;
+import entities.*;
 import utils.EMF_Creator;
 
 import javax.enterprise.inject.spi.Bean;
@@ -65,11 +62,13 @@ public class Generate {
         p2.setHobbies(BeanHobbies);
         p3.setHobbies(CleveHobbies);
         p4.setHobbies(OliHobbies);
-
-        p1.setAddress(new Address("Gallerstræde 2", "Istedgade 2.0"));
-        p2.setAddress(new Address("Luterra City Street 48", "Noob-Area"));
-        p3.setAddress(new Address("Clevegade 8", "Bean's Daus hjørne"));
-        p4.setAddress(new Address("Shushire Igloo nummer 2", "Slavestræde"));
+        Address genericAddress = new Address("Gallerstræde 2", "Istedgade 2.0");
+        CityInfo cityInfo = new CityInfo(2100, "København Ø");
+        genericAddress.setCityInfo(cityInfo);
+        p1.setAddress(genericAddress);
+        p2.setAddress(genericAddress);
+        p3.setAddress(genericAddress);
+        p4.setAddress(genericAddress);
 
 
 

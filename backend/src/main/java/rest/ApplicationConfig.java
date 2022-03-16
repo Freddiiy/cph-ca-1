@@ -1,5 +1,7 @@
 package rest;
 
+import repository.PersonRepository;
+
 import java.util.Set;
 import javax.ws.rs.core.Application;
 
