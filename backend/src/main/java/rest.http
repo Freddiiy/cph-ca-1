@@ -1,5 +1,5 @@
 ## GET
-GET http://localhost:8080/api/person/test
+GET http://localhost:8080/devops_starter_war_exploded/api/person/test
 Accept: application/json
 ###
 

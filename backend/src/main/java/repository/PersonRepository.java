@@ -1,22 +1,33 @@
 package repository;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import dtos.CityInfoDTO;
 import dtos.PersonDTO;
+import entities.CityInfo;
 import entities.Hobby;
 import entities.Person;
 import entities.Phone;
+import utils.CityInfoApi;
+import utils.EMF_Creator;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
+import javax.ws.rs.core.MediaType;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class PersonRepository implements IPersonRepository {
 
     private static EntityManagerFactory emf;
     private static PersonRepository instance;
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     private PersonRepository() {
     }
@@ -40,7 +51,6 @@ public class PersonRepository implements IPersonRepository {
             em.getTransaction().begin();
             em.persist(new Person(personDTO));
             em.getTransaction().commit();
-            ;
         } finally {
             em.close();
         }
@@ -84,9 +94,7 @@ public class PersonRepository implements IPersonRepository {
                 .setParameter("number", phone)
                 .getSingleResult();
 
-        Person result = em.createQuery("SELECT p FROM Person p WHERE p.id=:owner", Person.class)
-                .setParameter("owner", query.getOwner().getId())
-                .getSingleResult();
+        Person result = em.find(Person.class, query.getOwner().getId());
 
         PersonDTO personDTO = getById(query.getOwner().getId());
         if (personDTO == null) {
@@ -108,8 +116,8 @@ public class PersonRepository implements IPersonRepository {
     @Override
     public List<PersonDTO> getAllByCity(String cityInfo) {
         EntityManager em = getEntityManager();
-        TypedQuery<Person> query = em.createQuery("SELECT p FROM Person p WHERE p.address.cityInfo.id=:cityInfo", Person.class)
-                .setParameter("cityInfo", Long.parseLong(cityInfo));
+        TypedQuery<Person> query = em.createQuery("SELECT p FROM Person p WHERE p.address.cityInfo.city=:cityInfo", Person.class)
+                .setParameter("cityInfo", cityInfo);
         return PersonDTO.convertToDTO(query.getResultList());
     }
 
@@ -142,5 +150,61 @@ public class PersonRepository implements IPersonRepository {
         EntityManager em = getEntityManager();
         TypedQuery<CityInfoDTO> query = em.createQuery("SELECT c FROM CityInfo c", CityInfoDTO.class);
         return query.getResultList();
+    }
+
+    public static List<CityInfo> getCityInfo () {
+        EntityManagerFactory _emf = EMF_Creator.createEntityManagerFactory();
+        EntityManager em1 = _emf.createEntityManager();
+        TypedQuery<CityInfo> query = em1.createQuery("select c from CityInfo c", CityInfo.class);
+        System.out.println(query.getResultList().size());
+
+        if (query.getResultList().size() > 0) {
+            return query.getResultList();
+        }
+        em1.close();
+
+        try {
+            URL url = new URL("https://api.dataforsyningen.dk/postnumre");
+            HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setRequestProperty("ACCEPT", MediaType.APPLICATION_JSON);
+            Scanner scanner = new Scanner(urlConnection.getInputStream());
+            StringBuilder jsonString = new StringBuilder();
+
+            while (scanner.hasNext()) {
+                jsonString.append(scanner.nextLine());
+            }
+            scanner.close();
+
+            CityInfoApi[] cities = GSON.fromJson(String.valueOf(jsonString), CityInfoApi[].class);
+
+            List<CityInfo> convertedCities = new ArrayList<>();
+
+            for (CityInfoApi cityInfoApi : cities) {
+                convertedCities.add(
+                        new CityInfo(
+                                Integer.parseInt(cityInfoApi.getNr()),
+                                cityInfoApi.getNavn()
+                        )
+                );
+            }
+
+            for (CityInfo cityInfo : convertedCities) {
+                EntityManager em2 = _emf.createEntityManager();
+                try {
+                    em2.getTransaction().begin();
+                    em2.persist(cityInfo);
+                    em2.getTransaction().commit();
+                } finally {
+                    em2.close();
+                }
+            }
+
+            return convertedCities;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }
