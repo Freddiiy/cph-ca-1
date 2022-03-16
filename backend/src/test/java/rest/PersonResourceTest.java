@@ -1,54 +1,48 @@
 package rest;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import dtos.*;
 import entities.*;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.parsing.Parser;
+import io.restassured.response.Response;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.util.HttpStatus;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
-
 import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.jupiter.api.*;
 import repository.PersonRepository;
 import utils.EMF_Creator;
 
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.core.UriBuilder;
-import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import static junit.framework.Assert.assertEquals;
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+
+import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.hamcrest.Matchers.*;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
-//Uncomment the line below, to temporarily disable this test
+class PersonResourceTest {
 
+    private static EntityManagerFactory emf;
+    private EntityManager em;
+    private PersonRepository personRepository;
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-public class PersonResourceTest {
 
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api";
 
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
     private static HttpServer httpServer;
-    private static EntityManagerFactory emf; //Testing add()
-    private EntityManager em;
-    private PersonRepository personRepository;
-
 
     static HttpServer startServer() {
         ResourceConfig rc = ResourceConfig.forApplication(new ApplicationConfig());
@@ -84,15 +78,14 @@ public class PersonResourceTest {
     List<Hobby> hobbyList_5 = new ArrayList<>();
     Person person_5;
 
+
     @BeforeAll
     public static void setUpClass() {
         //This method must be called before you request the EntityManagerFactory
         EMF_Creator.startREST_TestWithDB();
         emf = EMF_Creator.createEntityManagerFactoryForTest();
-        PersonRepository personRepository = PersonRepository.getRepo(emf);
 
         httpServer = startServer();
-
         //Setup RestAssured
         RestAssured.baseURI = SERVER_URL;
         RestAssured.port = SERVER_PORT;
@@ -110,8 +103,8 @@ public class PersonResourceTest {
 
     @BeforeEach
     void setUp() {
-
-        EntityManager em = emf.createEntityManager();
+        em = emf.createEntityManager();
+        personRepository = PersonRepository.getRepo(emf);
 
         //Testing add()
         PhoneDTO beansDusMobil = new PhoneDTO("22505044", "HotlineBean");
@@ -176,6 +169,26 @@ public class PersonResourceTest {
         person_5.setHobbies(hobbyList_5);
         person_5.setAddress(weinellAddress);
 
+        em.getTransaction().begin();
+
+        //Testing delete()
+        em.persist(person_1);
+        em.persist(person_2);
+
+        //Testing getByPhone()
+        em.persist(person_3);
+        em.persist(person_4);
+
+        //Testing edit()
+        em.persist(person_5);
+        em.getTransaction().commit();
+
+
+    }
+
+    @AfterEach
+    void tearDown() {
+
         try {
             em.getTransaction().begin();
             em.createQuery("DELETE FROM Phone ").executeUpdate();
@@ -183,27 +196,16 @@ public class PersonResourceTest {
             em.createQuery("DELETE FROM Person ").executeUpdate();
             em.createQuery("DELETE FROM Address ").executeUpdate();
             em.createQuery("DELETE FROM CityInfo ").executeUpdate();
-
-            //Testing delete()
-            em.persist(person_1);
-            em.persist(person_2);
-
-            //Testing getByPhone()
-            em.persist(person_3);
-            em.persist(person_4);
-
-            //Testing edit()
-            em.persist(person_5);
-
             em.getTransaction().commit();
-        }   finally {
+
+        } finally {
             em.close();
         }
-
     }
 
+    //DEMO TEST ( PASSED )
     @Test
-    void demo_test(){
+    void demoTest() {
         given()
                 .contentType(ContentType.JSON)
                 .get("/person/test")
@@ -213,4 +215,175 @@ public class PersonResourceTest {
                 .body("msg", equalTo("Hello World"));
     }
 
+    //Get by ID ( PASSED )
+    //Expected JSON Object = Person ={firstname = Cleve}
+    @Test
+    void getPersonByIDTest() {
+        given()
+                .contentType(ContentType.JSON)
+                .get("/person/" + person_2.getId())
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("firstname", equalTo(person_2.getFirstname()));
+    }
+
+    //Get All Persons ( PASSED )
+    @Test
+    void getAllPersonsTest() {
+        List<PersonDTO> extractedDTOs;
+        extractedDTOs = given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get("/person")
+                .then()
+                .extract().body().jsonPath().getList("", PersonDTO.class);
+
+        assertEquals(personRepository.getAll().equals(extractedDTOs), extractedDTOs.equals(personRepository.getAll()));
+    }
+
+    //Add Person ( Passed? )
+    @Test
+    void addPersonTest() {
+
+        List<PhoneDTO> expPhoneList = new ArrayList<>();
+        expPhoneList.add(new PhoneDTO("64646464", "Hippo Bling"));
+
+        List<HobbyDTO> expHobbyList = new ArrayList<>();
+        expHobbyList.add(new HobbyDTO("Likes em big", "Likes em chonky"));
+
+        AddressDTO expAddress = new AddressDTO("ChunkyStr", "Mudderbad");
+        CityInfoDTO cityInfoDTO = new CityInfoDTO(1650, "Istedgade");
+        expAddress.setCityInfoDTO(cityInfoDTO);
+
+        PersonDTO expPerson = new PersonDTO("Moto", "Moto",
+                expAddress, cityInfoDTO, expPhoneList, expHobbyList);
+
+        String requestBody = GSON.toJson(expPerson);
+
+        given()
+                .header("Content-type", ContentType.JSON)
+                .and()
+                .body(requestBody)
+                .when()
+                .post("/person/add")
+                .then()
+                .assertThat()
+                .statusCode(200)
+                .body("firstname", equalTo("Moto"))
+                .body("lastname", equalTo("Moto"))
+                .body("phones", hasItems(hasEntry("number", "64646464")));
+
+    }
+
+    //Delete Person ( Passed )
+    @Test
+    void deletePersonTest() {
+        Long id = person_3.getId();
+
+        given()
+                .contentType(ContentType.JSON)
+                .delete("/person/" + id + "")
+                .then()
+                .assertThat()
+                .statusCode(200);
+        //Det virker, men vi ved ikke helt hvordan vi skulle assert det.
+    }
+
+    //Update Person ( Passed )
+    @Test
+    void updatePersonTest() {
+        person_2.setFirstname("Willump");
+        PersonDTO pdto = new PersonDTO(person_2);
+        String requestBody = GSON.toJson(pdto);
+
+        given()
+                .header("Content-type", ContentType.JSON)
+                .body(requestBody)
+                .when()
+                .put("/person/" + person_2.getId())
+                .then()
+                .assertThat()
+                .statusCode(200)
+                .body("firstname", equalTo("Willump"));
+    }
+
+    //Get All People by Hobby name ( Passed )
+    @Test
+    void getAllPeopleByHobbyName() {
+        List<PersonDTO> resultList = new ArrayList<>();
+        resultList = given()
+                .contentType(ContentType.JSON)
+//                .pathParam("id", p1.getId()).when()
+                .get("/person/hobby/{hobby}", hobbyList_3.get(0).getName())
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .extract().body().jsonPath().getList("", PersonDTO.class);
+
+        List<PersonDTO> expectedList = new ArrayList<>();
+        expectedList = personRepository.getAllByHobby(hobbyList_3.get(0).getName());
+
+        assertEquals(expectedList.equals(resultList), resultList.equals(expectedList));
+    }
+
+    //Number of People with given hobby ( Passed )
+    @Test
+    void NumOfPeopleWithGivenHobbyTest() {
+        String numOfPeople = get("/person/numberof/{hobby}", person_1.getHobbies().get(0).getName())
+                .then()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .extract()
+                .asString();
+
+        int parsedNumber = Integer.parseInt(numOfPeople);
+
+        assertEquals(1, parsedNumber);
+    }
+
+    //Get List of People living in a city ( Passed )
+    @Test
+    void getListOfPeopleInCity() {
+        List<PersonDTO> extractedDTOs;
+        extractedDTOs = given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get("/person/city/{city}", "Brøndby")
+                .then()
+                .extract().body().jsonPath().getList("", PersonDTO.class);
+
+        List<PersonDTO> expectedList;
+        expectedList = personRepository.getAllByCity("Brøndby");
+
+        assertEquals(expectedList.equals(extractedDTOs), extractedDTOs.equals(expectedList));
+
+    }
+
+    //Get Person By Phone ( Passed )
+    @Test
+    void getPersonByPhoneTest() {
+        given()
+                .contentType(ContentType.JSON)
+                .get("/person/phone/{phone}", person_1.getPhones().get(0).getNumber())
+                .then()
+                .assertThat()
+                .body("firstname", equalTo(person_1.getPhones().get(0).getOwner().getFirstname()));
+    }
+
+    //Get Lists of Cities by Zip ( passed)
+    @Test
+    void getListOfZipcodes() {
+        List<CityInfoDTO> extractedDTOs;
+        extractedDTOs = given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get("/person/zipcode")
+                .then()
+                .extract().body().jsonPath().getList("", CityInfoDTO.class);
+
+        List<CityInfoDTO> expectedList;
+        expectedList = personRepository.getZipCode();
+
+        assertEquals(expectedList.equals(extractedDTOs), extractedDTOs.equals(expectedList));
+    }
 }

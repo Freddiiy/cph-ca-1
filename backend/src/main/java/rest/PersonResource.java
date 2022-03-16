@@ -70,6 +70,7 @@ public class PersonResource {
 
     @DELETE
     @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response deletePerson(@PathParam("id") Long id) {
         PersonDTO personDTO = REPO.delete(id);
         if (personDTO == null) return Response.status(404).build();
@@ -155,7 +156,7 @@ public class PersonResource {
     }
 
     @GET
-    @Path("/zipecode")
+    @Path("/zipcode")
     @Produces({MediaType.APPLICATION_JSON})
     public Response getZipCodes() {
         List<CityInfoDTO> cityInfoDTOList = REPO.getZipCode();
