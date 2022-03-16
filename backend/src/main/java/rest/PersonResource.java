@@ -101,7 +101,7 @@ public class PersonResource {
     }
 
     @GET
-    @Path("/{hobby}")
+    @Path("/hobby/{hobby}")
     @Produces({MediaType.APPLICATION_JSON})
     public Response getHobby(@PathParam("hobby") String jsonObejkt) {
         List<PersonDTO> personDTOSList = REPO.getAllByHobby(jsonObejkt);

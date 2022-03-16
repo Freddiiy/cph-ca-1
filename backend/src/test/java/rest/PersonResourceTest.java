@@ -4,12 +4,14 @@ import dtos.*;
 import entities.*;
 import io.restassured.RestAssured;
 import io.restassured.parsing.Parser;
-import jakarta.ws.rs.core.UriBuilder;
-import org.apache.http.impl.bootstrap.HttpServer;
+import javax.ws.rs.core.UriBuilder;
+import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.util.HttpStatus;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
+
 import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.jupiter.api.*;
+import repository.PersonRepository;
 import utils.EMF_Creator;
 
 import javax.persistence.EntityManager;
@@ -17,13 +19,21 @@ import javax.persistence.EntityManagerFactory;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-
+import static junit.framework.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static io.restassured.RestAssured.given;
 
-//Uncomment the line below, to temporarily disable this test
-@Disabled
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class RenameMeResourceTest {
+//Uncomment the line below, to temporarily disable this test
+
+
+public class PersonResourceTest {
 
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api";
@@ -32,6 +42,8 @@ public class RenameMeResourceTest {
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
     private static HttpServer httpServer;
     private static EntityManagerFactory emf; //Testing add()
+    private EntityManager em;
+    private PersonRepository personRepository;
 
     List<PhoneDTO> phoneDTOList_1 = new ArrayList<>();
     List<HobbyDTO> hobbyDTOList_1 = new ArrayList<>();
@@ -63,7 +75,7 @@ public class RenameMeResourceTest {
 
     static HttpServer startServer() {
         ResourceConfig rc = ResourceConfig.forApplication(new ApplicationConfig());
-        return GrizzlyHttpServerFactory.createHttpServer(BASE_URI, rc);
+        return  GrizzlyHttpServerFactory.createHttpServer(BASE_URI,rc);
     }
 
     @BeforeAll
@@ -177,7 +189,21 @@ public class RenameMeResourceTest {
             em.close();
         }
     }
-
+    @AfterEach
+    void tearDown() {
+        try {
+            em.getTransaction().begin();
+            //OBS Rækkefølgen er ekstrem vigtig her v
+            em.createQuery("DELETE FROM Phone ").executeUpdate();
+            em.createQuery("DELETE FROM Hobby ").executeUpdate();
+            em.createQuery("DELETE FROM Person ").executeUpdate();
+            em.createQuery("DELETE FROM Address ").executeUpdate();
+            em.createQuery("DELETE FROM CityInfo ").executeUpdate();
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+    }
     @Test
     public void testServerIsUp() {
         System.out.println("Testing is server UP");
@@ -189,7 +215,7 @@ public class RenameMeResourceTest {
     public void testDummyMsg() throws Exception {
         given()
                 .contentType("application/json")
-                .get("/xxx/").then()
+                .get("/test/").then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("msg", equalTo("Hello World"));

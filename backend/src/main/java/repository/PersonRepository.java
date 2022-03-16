@@ -40,7 +40,6 @@ public class PersonRepository implements IPersonRepository {
             em.getTransaction().begin();
             em.persist(new Person(personDTO));
             em.getTransaction().commit();
-            ;
         } finally {
             em.close();
         }
