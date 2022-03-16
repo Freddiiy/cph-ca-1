@@ -167,6 +167,7 @@ class PersonRepositoryTest {
     //Add Person to Database ( PASSED )
     @Test
     void add() {
+
         PersonDTO actual = personRepository.add(personDTO_1);
         PersonDTO expected = personDTO_1;
         assertEquals(expected.equals(actual), actual.equals(expected));
@@ -240,6 +241,5 @@ class PersonRepositoryTest {
         String expectedName = "Nikolaj";
 
         assertEquals(expectedName, actual_postEdit.getFirstname());
-
     }
 }

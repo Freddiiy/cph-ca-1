@@ -4,7 +4,7 @@ import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
-/*
+
 @PreMatching
 @Provider
 public class CorsFilter implements ContainerResponseFilter {
@@ -17,4 +17,3 @@ public class CorsFilter implements ContainerResponseFilter {
     }
 
 }
-*/
