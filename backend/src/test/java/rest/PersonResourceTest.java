@@ -13,9 +13,11 @@ import org.junit.jupiter.api.*;
 import repository.PersonRepository;
 import utils.EMF_Creator;
 
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.core.UriBuilder;
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,14 +30,13 @@ import static org.hamcrest.Matchers.*;
 class PersonResourceTest {
 
     private static EntityManagerFactory emf;
-    private EntityManager em;
-    private PersonRepository personRepository;
 
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api";
 
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
-    private static HttpServer httpServer;
+    static HttpServer httpServer;
+
 
     static HttpServer startServer() {
         ResourceConfig rc = ResourceConfig.forApplication(new ApplicationConfig());
@@ -76,9 +77,11 @@ class PersonResourceTest {
     public static void setUpClass() {
         //This method must be called before you request the EntityManagerFactory
         EMF_Creator.startREST_TestWithDB();
-
         emf = EMF_Creator.createEntityManagerFactoryForTest();
+        PersonRepository personRepository = PersonRepository.getRepo(emf);
+
         httpServer = startServer();
+
         //Setup RestAssured
         RestAssured.baseURI = SERVER_URL;
         RestAssured.port = SERVER_PORT;
@@ -96,8 +99,8 @@ class PersonResourceTest {
 
     @BeforeEach
     void setUp() {
-        em = emf.createEntityManager();
-        personRepository = PersonRepository.getRepo(emf);
+
+        EntityManager em = emf.createEntityManager();
 
         //Testing add()
         PhoneDTO beansDusMobil = new PhoneDTO("22505044", "HotlineBean");
@@ -162,45 +165,37 @@ class PersonResourceTest {
         person_5.setHobbies(hobbyList_5);
         person_5.setAddress(weinellAddress);
 
-
-        em.getTransaction().begin();
-
-        //Testing delete()
-        em.persist(person_1);
-        em.persist(person_2);
-
-        //Testing getByPhone()
-        em.persist(person_3);
-        em.persist(person_4);
-
-        //Testing edit()
-        em.persist(person_5);
-
-        em.getTransaction().commit();
-
-    }
-
-    @AfterEach
-    void tearDown() {
         try {
             em.getTransaction().begin();
-            //OBS Rækkefølgen er ekstrem vigtig her v
             em.createQuery("DELETE FROM Phone ").executeUpdate();
             em.createQuery("DELETE FROM Hobby ").executeUpdate();
             em.createQuery("DELETE FROM Person ").executeUpdate();
             em.createQuery("DELETE FROM Address ").executeUpdate();
             em.createQuery("DELETE FROM CityInfo ").executeUpdate();
+
+            //Testing delete()
+            em.persist(person_1);
+            em.persist(person_2);
+
+            //Testing getByPhone()
+            em.persist(person_3);
+            em.persist(person_4);
+
+            //Testing edit()
+            em.persist(person_5);
+
             em.getTransaction().commit();
-        } finally {
+        }   finally {
             em.close();
         }
+
     }
 
     @Test
     void demo_test(){
         given()
                 .contentType(ContentType.JSON)
-                .get("/parent/demo")
+                .get("/person/test")
                 .then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())

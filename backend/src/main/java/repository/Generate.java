@@ -16,7 +16,8 @@ import java.util.List;
 
 
 public class Generate {
-    private static final EntityManagerFactory emf = EMF_Creator.createEntityManagerFactoryForTest();
+    //private static final EntityManagerFactory emf = EMF_Creator.createEntityManagerFactoryForTest();
+    private static final EntityManagerFactory emf = EMF_Creator.createEntityManagerFactory();
 
     public static void main(String[] args) {
 

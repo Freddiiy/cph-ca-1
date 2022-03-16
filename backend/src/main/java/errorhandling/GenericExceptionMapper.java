@@ -41,8 +41,8 @@ public class GenericExceptionMapper implements ExceptionMapper<Throwable>  {
         }
         return Response.status(type.getStatusCode())
                 .entity(gson.toJson(err))
-                .type(MediaType.APPLICATION_JSON).
-                build();
+                .type(MediaType.APPLICATION_JSON)
+                .build();
     }
 
     private Response.StatusType getStatusType(Throwable ex) {
