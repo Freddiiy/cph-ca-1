@@ -13,11 +13,9 @@ import org.junit.jupiter.api.*;
 import repository.PersonRepository;
 import utils.EMF_Creator;
 
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.core.UriBuilder;
-import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +28,14 @@ import static org.hamcrest.Matchers.*;
 class PersonResourceTest {
 
     private static EntityManagerFactory emf;
+    private EntityManager em;
+    private PersonRepository personRepository;
 
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api";
 
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
-    static HttpServer httpServer;
-
+    private static HttpServer httpServer;
 
     static HttpServer startServer() {
         ResourceConfig rc = ResourceConfig.forApplication(new ApplicationConfig());
@@ -78,10 +77,8 @@ class PersonResourceTest {
         //This method must be called before you request the EntityManagerFactory
         EMF_Creator.startREST_TestWithDB();
         emf = EMF_Creator.createEntityManagerFactoryForTest();
-        PersonRepository personRepository = PersonRepository.getRepo(emf);
 
         httpServer = startServer();
-
         //Setup RestAssured
         RestAssured.baseURI = SERVER_URL;
         RestAssured.port = SERVER_PORT;
@@ -99,8 +96,8 @@ class PersonResourceTest {
 
     @BeforeEach
     void setUp() {
-
-        EntityManager em = emf.createEntityManager();
+        em = emf.createEntityManager();
+        personRepository = PersonRepository.getRepo(emf);
 
         //Testing add()
         PhoneDTO beansDusMobil = new PhoneDTO("22505044", "HotlineBean");
@@ -165,6 +162,7 @@ class PersonResourceTest {
         person_5.setHobbies(hobbyList_5);
         person_5.setAddress(weinellAddress);
 
+
         try {
             em.getTransaction().begin();
             em.createQuery("DELETE FROM Phone ").executeUpdate();
@@ -191,6 +189,7 @@ class PersonResourceTest {
 
     }
 
+    //DEMO TEST ( PASSED )
     @Test
     void demo_test(){
         given()
@@ -201,4 +200,52 @@ class PersonResourceTest {
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("msg", equalTo("Hello World"));
     }
+
+    //Get by ID ( PASSED )
+    //Expected JSON Object = Person ={firstname = Cleve}
+    @Test
+    void getPersonByID_test(){
+        given()
+                .contentType(ContentType.JSON)
+                .get("/person/1")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("firstname", equalTo("Cleve"));
+    }
+
+    //Get All Persons ( PASSED )
+    @Test
+    void getAllPersons_test(){
+        List<PersonDTO> extractedDTOs;
+        extractedDTOs = given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get("/person")
+                .then()
+                .extract().body().jsonPath().getList("", PersonDTO.class);
+
+        assertEquals(personRepository.getAll().equals(extractedDTOs), extractedDTOs.equals(personRepository.getAll()));
+    }
+
+    //Add Person (  )
+    @Test
+    void addPerson_test(){
+        List<PersonDTO> expectedList = personRepository.getAll();
+
+    }
+
+    //Delete Person ( ? )
+
+    //Update Person ( ? )
+
+    //Get Hobby by name ( ? )
+
+    //Number of People with given hobby ( ? )
+
+    //Get List of People living in a city ( ? )
+
+    //Get Person By Phone ( ? )
+
+    //Get Lists of Cities by Zip ( ? )
 }

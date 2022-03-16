@@ -23,9 +23,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PersonRepositoryTest {
 
-    private EntityManagerFactory emf;
+    private EntityManagerFactory emf = EMF_Creator.createEntityManagerFactoryForTest();
     private EntityManager em;
-    private PersonRepository personRepository;
+    private PersonRepository personRepository = PersonRepository.getRepo(emf);
 
 
     //Testing add()
@@ -59,9 +59,7 @@ class PersonRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        emf = EMF_Creator.createEntityManagerFactoryForTest();
         em = emf.createEntityManager();
-        personRepository = PersonRepository.getRepo(emf);
 
         //Testing add()
         PhoneDTO beansDusMobil = new PhoneDTO("22505044", "HotlineBean");
