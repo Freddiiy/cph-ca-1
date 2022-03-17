@@ -29,7 +29,6 @@ import static org.hamcrest.CoreMatchers.hasItems;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.hamcrest.Matchers.*;
 
-@Disabled
 class PersonResourceTest {
 
     private static EntityManagerFactory emf;
