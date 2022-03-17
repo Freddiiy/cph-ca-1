@@ -27,7 +27,7 @@ public class PersonResource {
     public String demo() {
         return "{\"msg\":\"Hello World\"}";
     }
-/*
+
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -168,6 +168,4 @@ public class PersonResource {
                     .build();
 
     }
-
- */
 }
