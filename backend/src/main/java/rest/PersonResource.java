@@ -15,7 +15,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
-@Path("/person")
+@Path("person")
 public class PersonResource {
     private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory();
     private static final PersonRepository REPO = PersonRepository.getRepo(EMF);
@@ -27,7 +27,7 @@ public class PersonResource {
     public String demo() {
         return "{\"msg\":\"Hello World\"}";
     }
-
+/*
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -168,4 +168,6 @@ public class PersonResource {
                     .build();
 
     }
+
+ */
 }
