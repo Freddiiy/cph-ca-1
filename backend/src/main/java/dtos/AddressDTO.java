@@ -14,11 +14,9 @@ public class AddressDTO {
     }
 
     public AddressDTO(Address address) {
-        if (address.street != null) {
-            this.street = address.getStreet();
-            this.description = address.getDescription();
-            this.cityInfoDTO = new CityInfoDTO(address.getCityInfo());
-        }
+        this.street = address.getStreet();
+        this.description = address.getDescription();
+        this.cityInfoDTO = new CityInfoDTO(address.getCityInfo());
     }
 
     public String getStreet() {

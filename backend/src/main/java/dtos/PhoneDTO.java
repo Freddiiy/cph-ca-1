@@ -15,10 +15,8 @@ public class PhoneDTO {
     }
 
     public PhoneDTO(Phone phone) {
-        if (phone.getNumber() != null) {
-            this.number = phone.getNumber();
-            this.description = phone.getDescription();
-        }
+        this.number = phone.getNumber();
+        this.description = phone.getDescription();
     }
 
 

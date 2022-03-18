@@ -24,15 +24,13 @@ public class PersonDTO {
     }
 
     public PersonDTO(Person person) {
-        if (person.getId() != null) {
-            this.id = person.getId();
-            this.firstname = person.getFirstname();
-            this.lastname = person.getLastname();
-            this.address = new AddressDTO(person.getAddress());
-            this.cityInfo = new CityInfoDTO(person.getAddress().getCityInfo());
-            this.phones = PhoneDTO.convertToDTO(person.getPhones());
-            this.hobbies = HobbyDTO.convertToDTO(person.getHobbies());
-        }
+        this.id = person.getId();
+        this.firstname = person.getFirstname();
+        this.lastname = person.getLastname();
+        this.address = new AddressDTO(person.getAddress());
+        this.cityInfo = new CityInfoDTO(person.getAddress().getCityInfo());
+        this.phones = PhoneDTO.convertToDTO(person.getPhones());
+        this.hobbies = HobbyDTO.convertToDTO(person.getHobbies());
     }
 
     public Long getId() {
