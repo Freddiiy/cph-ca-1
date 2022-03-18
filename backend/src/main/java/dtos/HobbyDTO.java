@@ -15,10 +15,8 @@ public class HobbyDTO {
     }
 
     public HobbyDTO(Hobby hobby) {
-        if (hobby.getName() != null) {
-            this.name = hobby.getName();
-            this.description = hobby.getDescription();
-        }
+        this.name = hobby.getName();
+        this.description = hobby.getDescription();
     }
 
     public String getName() {
